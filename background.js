@@ -1,4 +1,4 @@
-let isRunning = false;  // 用來追蹤是否處於啟動狀態
+let isRunning = false;  
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log("script is loaded");
@@ -7,27 +7,22 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'start' && !isRunning) {
     isRunning = true;
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const currentTab = tabs[0];  // 當前活動分頁
-      if (currentTab && currentTab.url) {
-        console.log("當前頁面的 URL 是：" + currentTab.url);
-
-        if (currentTab.url.startsWith("https://www.twitch.tv")) {
-          // 注入 content.js
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach((tab) => {
+        if (tab.url.startsWith("https://www.twitch.tv")) {
           chrome.scripting.executeScript({
-            target: { tabId: currentTab.id },
+            target: { tabId: tab.id },
             files: ["content.js"]
           }, () => {
-            // 注入後，發送訊息啟動自動點擊
-            chrome.tabs.sendMessage(currentTab.id, { action: 'start' });
+            chrome.tabs.sendMessage(tab.id, { action: 'start' });
           });
         }
-      }
+      });
     });
+    
   }
   else if (message.action === 'stop' && isRunning) {
     isRunning = false;
-    // 查詢當前活動分頁並發送停止訊息
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const currentTab = tabs[0];
       if (currentTab) {

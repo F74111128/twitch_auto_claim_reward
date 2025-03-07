@@ -1,4 +1,4 @@
-// 使用 window 物件來存儲 intervalId，確保在多次加載中只會有一個 instance
+// store in window object to prevent multiple declaration
 if (!window.intervalId) {
   window.intervalId = null;
 }
@@ -12,14 +12,14 @@ function monitorAndClickButton() {
 }
 
 chrome.runtime.onMessage.addListener((message) => {
-  if (message.action === 'start' && window.intervalId === null) {  // 確保計時器尚未啟動
+  if (message.action === 'start' && window.intervalId === null) {  
     // 開始自動點擊
-    window.intervalId = setInterval(monitorAndClickButton, 2000); // 每2秒檢查一次
+    window.intervalId = setInterval(monitorAndClickButton, 2000); // check every 2 seconds
     console.log("script is running");
-  } else if (message.action === 'stop' && window.intervalId !== null) {  // 確保只有在計時器存在的情況下才停止
-    // 停止自動點擊
-    clearInterval(window.intervalId);  // 清除計時器
-    window.intervalId = null;  // 重設 intervalId
+  } else if (message.action === 'stop' && window.intervalId !== null) {  
+    // stop auto-click
+    clearInterval(window.intervalId);  // clear interval
+    window.intervalId = null;  // reset intervalId
     console.log('Auto-click stopped');
   }
 });
