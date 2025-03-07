@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Auto Click Bonus Button",
+  "name": "Twitch Auto Claim",
   "version": "1.0",
   "description": "自動點擊領取額外獎勳按鈕",
   "permissions": [
